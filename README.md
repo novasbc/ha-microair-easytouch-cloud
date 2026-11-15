@@ -147,5 +147,6 @@ MIT — see `LICENSE`.
 
 ## Changelog
 
+- **0.3.1** — Deleting the integration from Home Assistant now also deletes the credentials it stored (the IoT certificate/private key and sign-in tokens), following the HACS reviewer's suggestion. No other changes.
 - **0.3.0** — Added a settings (options) page: status check interval and debug logging, applied live. Added Download diagnostics support. Refreshed the README presentation.
 - **0.2.1** — Fixed mode changes doing nothing after the thermostat was powered off at the unit or in the app: the thermostat tracks power separately from mode, so mode changes now send power along with the mode, and Off sends power alone (mirroring the app's power button).

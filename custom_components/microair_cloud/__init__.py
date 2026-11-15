@@ -14,8 +14,9 @@ import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.storage import Store
 
-from .const import debug_logging_enabled
+from .const import CONF_SERIAL, DOMAIN, STORAGE_VERSION, debug_logging_enabled
 from .coordinator import MicroAirCloudCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -74,3 +75,19 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         coordinator: MicroAirCloudCoordinator = entry.runtime_data
         await coordinator.async_shutdown()
     return unloaded
+
+
+async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Remove a config entry: delete its persisted credentials.
+
+    Added in 0.3.1, following the HACS reviewer's suggestion on
+    PR #13532: the IoT certificate/private key and Cognito tokens
+    the coordinator persists in .storage/microair_cloud_<serial>
+    must not outlive the integration on a user's system. The
+    runtime PEM files are already deleted on unload (the
+    coordinator's async_shutdown); this removes the persistent
+    store itself. Unload alone never triggers this — restarts
+    and reloads keep the stored credentials, as before.
+    """
+    store = Store(hass, STORAGE_VERSION, f"{DOMAIN}_{entry.data[CONF_SERIAL]}")
+    await store.async_remove()
