@@ -145,6 +145,32 @@ thermostat and the phone app are unaffected throughout.
 
 MIT — see `LICENSE`.
 
+## Development
+
+Development uses [uv](https://docs.astral.sh/uv/). Install the locked
+development tools and run the local checks:
+
+```sh
+uv sync --locked
+uv run ruff check .
+uv run ruff format --check .
+uv run mypy
+uv run pytest
+```
+
+uv picks CPython 3.14 (3.14.2 or newer, below 3.15) from
+`requires-python` and downloads it if needed. The test plugin pins Home
+Assistant 2026.10.4, which runs on that Python series. The smoke test
+loads the manifest; broader behavior tests can be added later.
+
+Install the Git hooks with `uv run pre-commit install`, then run the
+hooks with `uv run pre-commit run --all-files`.
+
+To update a pinned tool, change its version in `pyproject.toml` and run
+`uv lock`; when ruff changes, keep the ruff `rev` in
+`.pre-commit-config.yaml` in step. `uv lock --upgrade-package <name>`
+refreshes a dependency that is given as a range.
+
 ## Changelog
 
 - **0.3.1** — Deleting the integration from Home Assistant now also deletes the credentials it stored (the IoT certificate/private key and sign-in tokens), following the HACS reviewer's suggestion. No other changes.
