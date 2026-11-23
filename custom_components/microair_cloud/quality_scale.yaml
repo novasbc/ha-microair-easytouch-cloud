@@ -1,0 +1,172 @@
+# Rule names: https://contributors.home-assistant.io/core/quality-scale/rules/
+# Documentation rules are assessed against README.md, the custom integration's manifest documentation link.
+rules:
+  # Bronze
+  action-setup:
+    status: exempt
+    comment: The integration does not register custom actions.
+  appropriate-polling:
+    status: done
+    comment: Status polls default to 60 seconds and users can choose 30 to 600 seconds.
+  brands:
+    status: todo
+    comment: brand/icon.png and brand/icon@2x.png ship locally under the 2026.3 custom-brand scheme, but not in home-assistant/brands for older supported versions.
+  common-modules:
+    status: todo
+    comment: The coordinator is in coordinator.py, but entity code has no shared entity.py.
+  config-flow:
+    status: todo
+    comment: UI setup exists, but setup fields lack required data_description strings.
+  config-flow-test-coverage:
+    status: todo
+    comment: No config flow behavior tests exist yet.
+  dependency-transparency:
+    status: todo
+    comment: Publication provenance of the runtime dependencies has not been checked.
+  docs-actions:
+    status: exempt
+    comment: The integration does not register custom actions.
+  docs-conditions:
+    status: exempt
+    comment: The integration does not provide custom conditions.
+  docs-high-level-description:
+    status: done
+    comment: The README describes the cloud thermostat integration and its purpose.
+  docs-installation-instructions:
+    status: done
+    comment: The README gives HACS and manual installation steps and setup prerequisites.
+  docs-removal-instructions:
+    status: done
+    comment: The README explains config-entry deletion and file removal.
+  docs-triggers:
+    status: exempt
+    comment: The integration does not provide custom triggers.
+  entity-event-setup:
+    status: exempt
+    comment: Entities have no manual event subscriptions; CoordinatorEntity manages coordinator callbacks.
+  entity-unique-id:
+    status: done
+    comment: Climate and sensor entities use serial-based unique IDs.
+  has-entity-name:
+    status: done
+    comment: Climate and sensor entities set has_entity_name.
+  runtime-data:
+    status: done
+    comment: async_setup_entry stores the coordinator in entry.runtime_data.
+  test-before-configure:
+    status: done
+    comment: The config flow validates the account and probes thermostat status.
+  test-before-setup:
+    status: done
+    comment: Setup awaits the coordinator's first refresh before forwarding platforms.
+  unique-config-entry:
+    status: done
+    comment: The config flow sets the thermostat serial as unique ID and aborts duplicates.
+
+  # Silver
+  action-exceptions:
+    status: todo
+    comment: Climate control failures can return without a Home Assistant exception.
+  config-entry-unloading:
+    status: done
+    comment: async_unload_entry unloads platforms and shuts down the coordinator.
+  docs-configuration-parameters:
+    status: done
+    comment: The README Settings section describes both options and their effects.
+  docs-installation-parameters:
+    status: todo
+    comment: The README says to sign in but does not explain each setup field or multi-thermostat selection.
+  entity-unavailable:
+    status: todo
+    comment: The connection-status sensor stays available when the cloud is unreachable.
+  integration-owner:
+    status: done
+    comment: manifest.json lists an integration code owner.
+  log-when-unavailable:
+    status: todo
+    comment: UpdateFailed uses coordinator loss/recovery logging, but _start_link exceptions escape unwrapped and log a traceback on each poll.
+  parallel-updates:
+    status: todo
+    comment: Neither entity platform declares PARALLEL_UPDATES.
+  reauthentication-flow:
+    status: todo
+    comment: There is no reauthentication step in the config flow.
+  test-coverage:
+    status: todo
+    comment: The smoke test does not cover integration behavior.
+
+  # Gold
+  devices:
+    status: done
+    comment: Climate and sensor entities expose the thermostat's device information.
+  diagnostics:
+    status: done
+    comment: Diagnostics redact entry identifiers and credential material.
+  discovery:
+    status: exempt
+    comment: No DHCP or zeroconf signature is known for the cloud path, and this integration deliberately avoids Bluetooth.
+  discovery-update-info:
+    status: exempt
+    comment: No discovery address exists for this credential-based cloud service.
+  docs-data-update:
+    status: done
+    comment: The README explains the status polling interval and live settings changes.
+  docs-examples:
+    status: todo
+    comment: No automation examples are documented.
+  docs-known-limitations:
+    status: done
+    comment: The README has a Known limitations section.
+  docs-supported-devices:
+    status: todo
+    comment: The README names a tested model, but has no official supported-device list.
+  docs-supported-functions:
+    status: done
+    comment: The README Features section lists climate controls, sensors, settings, and diagnostics.
+  docs-troubleshooting:
+    status: todo
+    comment: The README does not have a troubleshooting guide.
+  docs-use-cases:
+    status: todo
+    comment: The README has no specific use-case examples.
+  dynamic-devices:
+    status: exempt
+    comment: Each config entry manages one fixed thermostat selected by serial; another thermostat needs another entry.
+  entity-category:
+    status: todo
+    comment: The connection-status entity has no diagnostic category.
+  entity-device-class:
+    status: done
+    comment: Temperature and enum sensors declare device classes.
+  entity-disabled-by-default:
+    status: todo
+    comment: The less commonly needed mode and connection sensors are enabled by default.
+  entity-translations:
+    status: todo
+    comment: strings.json has sensor names, but entities use _attr_name without translation_key.
+  exception-translations:
+    status: todo
+    comment: User-facing action errors are not translated.
+  icon-translations:
+    status: todo
+    comment: The integration has no icons.json entity icon translations.
+  reconfiguration-flow:
+    status: todo
+    comment: The config flow has no reconfigure step.
+  repair-issues:
+    status: todo
+    comment: The integration does not raise repair issues.
+  stale-devices:
+    status: exempt
+    comment: The one fixed thermostat belongs to its config entry and is removed with that entry.
+
+  # Platinum
+  async-dependency:
+    status: todo
+    comment: The cloud and MQTT clients use blocking libraries through executor jobs.
+  inject-websession:
+    status: todo
+    comment: Cloud HTTP requests use boto3 rather than Home Assistant's web session.
+  strict-typing:
+    status: todo
+    comment: Existing modules are not fully annotated or strict-mypy clean.
