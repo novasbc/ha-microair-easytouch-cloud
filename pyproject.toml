@@ -1,0 +1,87 @@
+# Tooling metadata only; the integration version lives in custom_components/microair_cloud/manifest.json.
+[project]
+name = "ha-microair-easytouch-cloud"
+version = "0"
+# Home Assistant 2026.10.4 needs 3.14.2 or newer; stay on the 3.14 series it ships with.
+requires-python = ">=3.14.2,<3.15"
+
+[tool.uv]
+package = false
+
+[dependency-groups]
+dev = [
+    # 0.13.375 pins Home Assistant 2026.10.4 and pytest 9.0.3 internally.
+    "pytest-homeassistant-custom-component==0.13.375",
+    "ruff==0.17.6",
+    "mypy==2.4.1",
+    "pre-commit==4.7.0",
+    # Mirror manifest.json requirements; keep these in step by hand.
+    "boto3>=1.35.0,<2",
+    "paho-mqtt>=2.0,<3",
+]
+
+[tool.ruff]
+# Target the Python 3.12 baseline of the declared Home Assistant minimum.
+target-version = "py312"
+force-exclude = true
+
+[tool.ruff.lint]
+# Ruff's default lint rules; broader cleanup belongs in a later change.
+select = ["E4", "E7", "E9", "F"]
+
+[tool.ruff.format]
+# Existing integration sources are intentionally left as-is for this PR.
+exclude = ["custom_components/microair_cloud/*.py"]
+
+[tool.mypy]
+# Permissive baseline until the existing runtime modules are strictly typed.
+python_version = "3.14"
+files = ["custom_components/microair_cloud", "tests"]
+check_untyped_defs = false
+explicit_package_bases = true
+follow_imports = "silent"
+
+[[tool.mypy.overrides]]
+# Runtime AWS SDK imports do not provide typing information to mypy.
+module = ["boto3.*", "botocore.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# Existing options parsing accepts an optional value before int conversion.
+module = "custom_components.microair_cloud.const"
+disable_error_code = ["arg-type"]
+
+[[tool.mypy.overrides]]
+# Existing setup passes immutable options to dict-typed helpers and leaves Store generic.
+module = "custom_components.microair_cloud"
+disable_error_code = ["arg-type", "var-annotated"]
+
+[[tool.mypy.overrides]]
+# Existing token refresh returns values from an untyped stored-data dictionary.
+module = "custom_components.microair_cloud.coordinator"
+disable_error_code = ["return-value"]
+
+[[tool.mypy.overrides]]
+# Existing flow passes voluptuous schemas and immutable options, and leaves Store generic.
+module = "custom_components.microair_cloud.config_flow"
+disable_error_code = ["arg-type", "var-annotated"]
+
+[[tool.mypy.overrides]]
+# Existing status values, mixed control payloads, and coordinator subtype are dynamic.
+module = "custom_components.microair_cloud.climate"
+disable_error_code = ["arg-type", "dict-item", "index", "attr-defined"]
+
+[[tool.mypy.overrides]]
+# Existing diagnostics passes immutable options to dict-typed helpers.
+module = "custom_components.microair_cloud.diagnostics"
+disable_error_code = ["arg-type"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = "-ra --cov=custom_components.microair_cloud --cov-report=term-missing"
+
+[tool.coverage.report]
+skip_empty = true
