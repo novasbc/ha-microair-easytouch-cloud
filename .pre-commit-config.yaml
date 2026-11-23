@@ -1,0 +1,15 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.6
+    hooks:
+      - id: ruff-check
+      - id: ruff-format
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+      - id: check-toml
+      - id: end-of-file-fixer
+        # Preserve upstream JSON files that currently have no final newline.
+        exclude: ^(hacs\.json|custom_components/microair_cloud/(strings\.json|translations/en\.json))$
+      - id: trailing-whitespace
